@@ -64,6 +64,32 @@ fastify.get(
       }
 );
 
+fastify.get(
+    "/force-refresh/:id",
+    async (request) => {
+        const id = request.params.id;
+        const file = path.join(__dirname, "./db/" + id + ".json");
+      
+        try {
+            let content = {type: "scrap", content: [], date: new Date()};
+      
+            content.type = "scrap";
+            content.content = await GetGoogleDrive(id);
+            fs.writeFileSync(file, JSON.stringify({
+                type: "loaded from file",
+                id: id,
+                content: content.content,
+                date: new Date()
+            }));
+      
+            return content;
+        } catch(e){
+            console.error(e);
+            return {error: true, msg: e};
+        }
+      }
+);
+
 const ADDRESS = "0.0.0.0";
 const PORT = process.env.PORT || 3000;
 
