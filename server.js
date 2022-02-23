@@ -1,5 +1,7 @@
 "use strict";
 
+require("dotenv").config();
+
 const fastify = require('fastify')({ logger: true });
 const GetGoogleDrive = require('drive-album');
 const path = require('path');
@@ -62,13 +64,12 @@ fastify.get(
       }
 );
 
-const start = async () => {
-    try {
-      await fastify.listen(process.env.PORT || 3000, '0.0.0.0')
-    } catch (err) {
-      fastify.log.error(err)
-      process.exit(1)
-    }
-  }
+const ADDRESS = "0.0.0.0";
+const PORT = process.env.PORT || 3000;
 
-start()
+fastify.listen(PORT, ADDRESS, (err, address) => {
+   if (err) {
+      console.log(err);
+      process.exit(1);
+   }
+});
