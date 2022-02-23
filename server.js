@@ -4,7 +4,6 @@ const fastify = require('fastify')({ logger: true });
 const GetGoogleDrive = require('drive-album');
 const path = require('path');
 const fs = require('fs');
-const awsLambdaFastify = require('aws-lambda-fastify')
 
 function TimeBetweenTwoDate(startDate, stopDate){
     const diff = (stopDate.getTime() - startDate.getTime()) / 1000;
@@ -63,8 +62,13 @@ fastify.get(
       }
 );
 
-const proxy = awsLambdaFastify(fastify)
-// or
-// const proxy = awsLambdaFastify(app, { binaryMimeTypes: ['application/octet-stream'], serializeLambdaArguments: false /* default is true */ })
+const start = async () => {
+    try {
+      await fastify.listen(process.env.PORT, process.env.HOST || '0.0.0.0')
+    } catch (err) {
+      fastify.log.error(err)
+      process.exit(1)
+    }
+  }
 
-exports.handler = proxy;
+start()
